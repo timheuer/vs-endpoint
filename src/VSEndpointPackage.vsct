@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+  <Include href="KnownImageIds.vsct"/>
+
+  <Commands package="guidVSEndpointPackage">
+    <Groups>
+      <!-- Group in Tools menu -->
+      <Group guid="guidVSEndpointCmdSet" id="ToolsMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+      </Group>
+      
+      <!-- Group for editor context menu -->
+      <Group guid="guidVSEndpointCmdSet" id="EditorContextGroup" priority="0x0100">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
+      </Group>
+    </Groups>
+
+    <Buttons>
+      <!-- Send Request command -->
+      <Button guid="guidVSEndpointCmdSet" id="cmdidSendRequest" priority="0x0100" type="Button">
+        <Parent guid="guidVSEndpointCmdSet" id="ToolsMenuGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Send"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <ButtonText>Send HTTP Request</ButtonText>
+          <LocCanonicalName>VSEndpoint.SendRequest</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <!-- Send Request context menu command -->
+      <Button guid="guidVSEndpointCmdSet" id="cmdidSendRequestContext" priority="0x0100" type="Button">
+        <Parent guid="guidVSEndpointCmdSet" id="EditorContextGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Send"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <ButtonText>Send Request</ButtonText>
+          <LocCanonicalName>VSEndpoint.SendRequestContext</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <!-- View Response command -->
+      <Button guid="guidVSEndpointCmdSet" id="cmdidViewResponse" priority="0x0101" type="Button">
+        <Parent guid="guidVSEndpointCmdSet" id="ToolsMenuGroup"/>
+        <Icon guid="ImageCatalogGuid" id="StatusInformation"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>View HTTP Response</ButtonText>
+          <LocCanonicalName>VSEndpoint.ViewResponse</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <!-- Clear Session command -->
+      <Button guid="guidVSEndpointCmdSet" id="cmdidClearSession" priority="0x0102" type="Button">
+        <Parent guid="guidVSEndpointCmdSet" id="ToolsMenuGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Refresh"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>Clear HTTP Session</ButtonText>
+          <LocCanonicalName>VSEndpoint.ClearSession</LocCanonicalName>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+
+  <KeyBindings>
+    <KeyBinding guid="guidVSEndpointCmdSet" id="cmdidSendRequest" mod1="Control Alt" key1="R" editor="guidVSStd97"/>
+  </KeyBindings>
+
+  <Symbols>
+    <GuidSymbol name="guidVSEndpointPackage" value="{9c637616-a5b0-40cd-ac31-c087c0260cac}" />
+    
+    <GuidSymbol name="guidVSEndpointCmdSet" value="{d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a}">
+      <IDSymbol name="ToolsMenuGroup" value="0x1020"/>
+      <IDSymbol name="EditorContextGroup" value="0x1021"/>
+      <IDSymbol name="cmdidSendRequest" value="0x0100"/>
+      <IDSymbol name="cmdidSendRequestContext" value="0x0101"/>
+      <IDSymbol name="cmdidViewResponse" value="0x0102"/>
+      <IDSymbol name="cmdidClearSession" value="0x0103"/>
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>

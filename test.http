@@ -1,0 +1,32 @@
+### Get example
+GET https://httpbin.org/get
+
+### POST example with JSON body
+# @name createUser
+POST https://httpbin.org/post
+Content-Type: application/json
+
+{
+    "name": "Test User",
+    "email": "test@example.com"
+}
+
+### Use response from previous request
+GET https://httpbin.org/anything
+X-Previous-Url: {{createUser.response.body.url}}
+
+### With variables
+@baseUrl = https://httpbin.org
+
+GET {{baseUrl}}/headers
+Accept: application/json
+
+### Built-in functions
+POST https://httpbin.org/post
+Content-Type: application/json
+
+{
+    "id": "{{$guid}}",
+    "timestamp": "{{$timestamp}}",
+    "random": "{{$randomInt 1 100}}"
+}
