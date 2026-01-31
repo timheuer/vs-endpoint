@@ -14,21 +14,109 @@
              Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}">
 
     <UserControl.Resources>
+        <!-- Modern View Tab Style (RadioButton-based) -->
+        <Style x:Key="ViewTabStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Margin" Value="0,0,2,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4,4,0,0"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <Grid>
+                                <ContentPresenter x:Name="content" 
+                                                  HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center"/>
+                                <Border x:Name="indicator"
+                                        Height="2"
+                                        VerticalAlignment="Bottom"
+                                        Margin="0,0,0,-8"
+                                        CornerRadius="1"
+                                        Background="Transparent"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" 
+                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
+                                <Setter TargetName="indicator" Property="Background" Value="#0078D4"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" 
+                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsChecked" Value="True"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" 
+                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modern Button Style -->
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="0,0,4,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" 
+                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#0078D4"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" 
+                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseDownBackgroundGradientBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- VS-themed Toggle Button Style -->
-        <Style x:Key="VsToggleButtonStyle"
-               TargetType="ToggleButton">
-            <Setter Property="Background"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
-            <Setter Property="Foreground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarTextActiveBrushKey}}"/>
-            <Setter Property="BorderBrush"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarBorderBrushKey}}"/>
-            <Setter Property="BorderThickness"
-                    Value="1"/>
-            <Setter Property="Padding"
-                    Value="8,4"/>
-            <Setter Property="Cursor"
-                    Value="Hand"/>
+        <Style x:Key="VsToggleButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
@@ -37,83 +125,23 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Padding="{TemplateBinding Padding}"
-                                CornerRadius="2">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter TargetName="border"
-                                        Property="Background"
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" 
                                         Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
-                                <Setter TargetName="border"
-                                        Property="BorderBrush"
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarSelectedBorderBrushKey}}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#0078D4"/>
                             </Trigger>
-                            <Trigger Property="IsChecked"
-                                     Value="True">
-                                <Setter TargetName="border"
-                                        Property="Background"
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#0078D4"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#0078D4"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" 
                                         Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseDownBackgroundGradientBrushKey}}"/>
-                                <Setter TargetName="border"
-                                        Property="BorderBrush"
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarSelectedBorderBrushKey}}"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed"
-                                     Value="True">
-                                <Setter TargetName="border"
-                                        Property="Background"
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseDownBackgroundGradientBrushKey}}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="TabControl">
-            <Setter Property="Background"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            <Setter Property="BorderBrush"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-        </Style>
-
-        <Style TargetType="TabItem">
-            <Setter Property="Background"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTabGradientBrushKey}}"/>
-            <Setter Property="Foreground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="Padding"
-                    Value="10,4"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <Border x:Name="Border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"
-                                BorderThickness="1,1,1,0"
-                                Margin="0,0,2,0"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter ContentSource="Header"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected"
-                                     Value="True">
-                                <Setter TargetName="Border"
-                                        Property="Background"
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                                <Setter TargetName="Border"
-                                        Property="Margin"
-                                        Value="0,0,2,-1"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter TargetName="Border"
-                                        Property="Background"
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -123,144 +151,100 @@
 
         <!-- DataGrid Styles -->
         <Style TargetType="DataGrid">
-            <Setter Property="Background"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            <Setter Property="Foreground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-            <Setter Property="RowBackground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            <Setter Property="AlternatingRowBackground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
-            <Setter Property="HorizontalGridLinesBrush"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-            <Setter Property="VerticalGridLinesBrush"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
         </Style>
 
         <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
-            <Setter Property="Foreground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-            <Setter Property="BorderThickness"
-                    Value="0,0,1,1"/>
-            <Setter Property="Padding"
-                    Value="8,4"/>
-            <Setter Property="FontWeight"
-                    Value="SemiBold"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
 
         <Style TargetType="DataGridCell">
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="Foreground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush"
-                    Value="Transparent"/>
-            <Setter Property="Padding"
-                    Value="4,2"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="6,4"/>
             <Style.Triggers>
-                <Trigger Property="IsSelected"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
         <Style TargetType="DataGridRow">
-            <Setter Property="Background"
-                    Value="Transparent"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Style.Triggers>
-                <Trigger Property="IsSelected"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                 </Trigger>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
         <Style TargetType="TreeView">
-            <Setter Property="Background"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            <Setter Property="Foreground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-            <Setter Property="BorderThickness"
-                    Value="0"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
         <Style TargetType="TreeViewItem">
-            <Setter Property="Foreground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="Padding"
-                    Value="2,1"/>
-            <Setter Property="HorizontalContentAlignment"
-                    Value="Stretch"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="2,1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Style.Triggers>
-                <Trigger Property="IsSelected"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="{DynamicResource {x:Static vs:EnvironmentColors.SystemHighlightBrushKey}}"/>
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource {x:Static vs:EnvironmentColors.SystemHighlightTextBrushKey}}"/>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.SystemHighlightBrushKey}}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.SystemHighlightTextBrushKey}}"/>
                 </Trigger>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-        <Style TargetType="TextBox"
-               x:Key="RawTextBoxStyle">
-            <Setter Property="Background"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            <Setter Property="Foreground"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-            <Setter Property="CaretBrush"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="FontFamily"
-                    Value="Consolas"/>
-            <Setter Property="FontSize"
-                    Value="12"/>
+        <Style TargetType="TextBox" x:Key="RawTextBoxStyle">
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="12"/>
         </Style>
 
         <Style TargetType="ScrollViewer">
-            <Setter Property="Background"
-                    Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
         </Style>
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Metadata Bar -->
+        <!-- Modern Toolbar -->
         <Border Grid.Row="0"
-                Padding="8"
                 Background="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"
                 BorderBrush="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"
-                BorderThickness="0,0,0,1">
+                BorderThickness="0,0,0,1"
+                Padding="10,6">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -273,37 +257,46 @@
                 <!-- Status Code Badge -->
                 <Border x:Name="StatusBadge"
                         Grid.Column="0"
-                        Padding="8,4"
+                        Padding="10,4"
                         CornerRadius="4"
                         Margin="0,0,12,0"
                         Background="#4CAF50"
                         Visibility="Collapsed">
                     <TextBlock x:Name="StatusCodeText"
                                FontWeight="SemiBold"
+                               FontSize="12"
                                Foreground="White"/>
                 </Border>
 
                 <!-- Response Time -->
                 <StackPanel Grid.Column="1"
                             Orientation="Horizontal"
-                            Margin="0,0,12,0">
+                            VerticalAlignment="Center"
+                            Margin="0,0,16,0">
                     <TextBlock Text="Time: "
+                               FontSize="12"
                                Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
                                Opacity="0.7"/>
                     <TextBlock x:Name="ResponseTimeText"
                                Text="--"
+                               FontSize="12"
+                               FontWeight="Medium"
                                Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 </StackPanel>
 
                 <!-- Response Size -->
                 <StackPanel Grid.Column="2"
                             Orientation="Horizontal"
-                            Margin="0,0,12,0">
+                            VerticalAlignment="Center"
+                            Margin="0,0,16,0">
                     <TextBlock Text="Size: "
+                               FontSize="12"
                                Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
                                Opacity="0.7"/>
                     <TextBlock x:Name="ResponseSizeText"
                                Text="--"
+                               FontSize="12"
+                               FontWeight="Medium"
                                Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 </StackPanel>
 
@@ -311,8 +304,10 @@
                 <StackPanel x:Name="LoadingPanel"
                             Grid.Column="3"
                             Orientation="Horizontal"
+                            VerticalAlignment="Center"
                             Visibility="Collapsed">
                     <TextBlock Text="Executing request..."
+                               FontSize="12"
                                Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
                                FontStyle="Italic"/>
                 </StackPanel>
@@ -323,21 +318,53 @@
                               Style="{StaticResource VsToggleButtonStyle}"
                               Visibility="Collapsed"
                               Click="TreeViewToggle_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="TreeViewToggleText"
-                                   Text="Tree View"/>
-                    </StackPanel>
+                    <TextBlock x:Name="TreeViewToggleText"
+                               Text="Tree View"
+                               FontSize="12"/>
                 </ToggleButton>
             </Grid>
         </Border>
 
-        <!-- Tab Control -->
-        <TabControl Grid.Row="1"
-                    x:Name="ResponseTabs"
-                    Margin="4">
-            <!-- Body Tab -->
-            <TabItem Header="Body">
-                <Grid>
+        <!-- View Tabs -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                Padding="10,8,10,0">
+            <StackPanel Orientation="Horizontal">
+                <RadioButton x:Name="BodyTab"
+                             Content="Body"
+                             Style="{StaticResource ViewTabStyle}"
+                             IsChecked="True"
+                             Checked="ViewTab_Checked"
+                             GroupName="ViewTabs"/>
+                <RadioButton x:Name="HeadersTab"
+                             Content="Headers"
+                             Style="{StaticResource ViewTabStyle}"
+                             Checked="ViewTab_Checked"
+                             GroupName="ViewTabs"/>
+                <RadioButton x:Name="CookiesTab"
+                             Content="Cookies"
+                             Style="{StaticResource ViewTabStyle}"
+                             Checked="ViewTab_Checked"
+                             GroupName="ViewTabs"
+                             Visibility="Collapsed"/>
+                <RadioButton x:Name="RawTab"
+                             Content="Raw"
+                             Style="{StaticResource ViewTabStyle}"
+                             Checked="ViewTab_Checked"
+                             GroupName="ViewTabs"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Content Area -->
+        <Border Grid.Row="2"
+                Margin="10,0,10,10"
+                Background="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"
+                BorderBrush="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"
+                BorderThickness="1"
+                CornerRadius="6">
+            <Grid x:Name="ContentArea" Margin="1">
+                <!-- Body Content -->
+                <Grid x:Name="BodyContent">
                     <!-- AvalonEdit Text View with syntax highlighting -->
                     <avalon:TextEditor x:Name="BodyEditor"
                                        IsReadOnly="True"
@@ -355,19 +382,16 @@
                               VirtualizingStackPanel.VirtualizationMode="Recycling">
                         <TreeView.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Copy Path"
-                                          Click="CopyPath_Click"/>
-                                <MenuItem Header="Copy Value"
-                                          Click="CopyValue_Click"/>
+                                <MenuItem Header="Copy Path" Click="CopyPath_Click"/>
+                                <MenuItem Header="Copy Value" Click="CopyValue_Click"/>
                             </ContextMenu>
                         </TreeView.ContextMenu>
                     </TreeView>
                 </Grid>
-            </TabItem>
 
-            <!-- Headers Tab -->
-            <TabItem Header="Headers">
+                <!-- Headers Content -->
                 <DataGrid x:Name="HeadersGrid"
+                          Visibility="Collapsed"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           GridLinesVisibility="Horizontal"
@@ -377,21 +401,14 @@
                           SelectionMode="Single"
                           SelectionUnit="FullRow">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name"
-                                            Binding="{Binding Key}"
-                                            Width="200"/>
-                        <DataGridTextColumn Header="Value"
-                                            Binding="{Binding Value}"
-                                            Width="*"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Key}" Width="200"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </TabItem>
 
-            <!-- Cookies Tab -->
-            <TabItem x:Name="CookiesTab"
-                    Header="Cookies"
-                    Visibility="Collapsed">
+                <!-- Cookies Content -->
                 <DataGrid x:Name="CookiesGrid"
+                          Visibility="Collapsed"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           GridLinesVisibility="Horizontal"
@@ -401,34 +418,20 @@
                           SelectionMode="Single"
                           SelectionUnit="FullRow">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name"
-                                            Binding="{Binding Name}"
-                                            Width="120"/>
-                        <DataGridTextColumn Header="Value"
-                                            Binding="{Binding Value}"
-                                            Width="*"/>
-                        <DataGridTextColumn Header="Domain"
-                                            Binding="{Binding Domain}"
-                                            Width="100"/>
-                        <DataGridTextColumn Header="Path"
-                                            Binding="{Binding Path}"
-                                            Width="60"/>
-                        <DataGridTextColumn Header="Expires"
-                                            Binding="{Binding Expires}"
-                                            Width="120"/>
-                        <DataGridCheckBoxColumn Header="HttpOnly"
-                                                Binding="{Binding HttpOnly}"
-                                                Width="60"/>
-                        <DataGridCheckBoxColumn Header="Secure"
-                                                Binding="{Binding Secure}"
-                                                Width="50"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="120"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*"/>
+                        <DataGridTextColumn Header="Domain" Binding="{Binding Domain}" Width="100"/>
+                        <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="60"/>
+                        <DataGridTextColumn Header="Expires" Binding="{Binding Expires}" Width="120"/>
+                        <DataGridCheckBoxColumn Header="HttpOnly" Binding="{Binding HttpOnly}" Width="60"/>
+                        <DataGridCheckBoxColumn Header="Secure" Binding="{Binding Secure}" Width="50"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </TabItem>
 
-            <!-- Raw Tab -->
-            <TabItem Header="Raw">
-                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                <!-- Raw Content -->
+                <ScrollViewer x:Name="RawContent"
+                              Visibility="Collapsed"
+                              HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Auto">
                     <TextBox x:Name="RawTextBox"
                              Style="{StaticResource RawTextBoxStyle}"
@@ -437,27 +440,52 @@
                              AcceptsReturn="True"
                              BorderThickness="0"/>
                 </ScrollViewer>
-            </TabItem>
-        </TabControl>
+            </Grid>
+        </Border>
+
+        <!-- Modern Status Bar -->
+        <Border Grid.Row="3"
+                Background="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"
+                BorderBrush="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"
+                BorderThickness="0,1,0,0"
+                Padding="12,6">
+            <TextBlock x:Name="ContentTypeText"
+                       Text=""
+                       Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
+                       Opacity="0.7"
+                       FontSize="11"
+                       VerticalAlignment="Center"/>
+        </Border>
 
         <!-- Empty State -->
         <Border x:Name="EmptyStatePanel"
                 Grid.Row="1"
+                Grid.RowSpan="3"
                 Visibility="Visible"
                 Background="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center">
+                <Border Width="64" Height="64" 
+                        CornerRadius="32" 
+                        Background="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"
+                        Margin="0,0,0,16">
+                    <TextBlock Text="⚡"
+                               FontSize="28"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Border>
                 <TextBlock Text="No response yet"
                            FontSize="16"
+                           FontWeight="Medium"
                            Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
-                           Opacity="0.5"
+                           Opacity="0.7"
                            HorizontalAlignment="Center"/>
                 <TextBlock Text="Execute a request from a .http or .rest file"
                            FontSize="12"
                            Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
-                           Opacity="0.4"
+                           Opacity="0.5"
                            HorizontalAlignment="Center"
-                           Margin="0,8,0,0"/>
+                           Margin="0,6,0,0"/>
             </StackPanel>
         </Border>
     </Grid>

@@ -6,12 +6,9 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Xml;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using ICSharpCode.AvalonEdit.Rendering;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using VSEndpoint.Services.Execution;
@@ -46,7 +43,6 @@ namespace VSEndpoint.ToolWindows
         private void ConfigureEditor(TextEditor editor)
         {
             // Enable line highlighting
-            editor.Options.HighlightCurrentLine = true;
             editor.Options.EnableHyperlinks = false;
             editor.Options.EnableEmailHyperlinks = false;
 
@@ -86,68 +82,27 @@ namespace VSEndpoint.ToolWindows
 
         private void ApplyThemeAwareSyntaxHighlighting(TextEditor editor, bool isDarkTheme)
         {
-            // Register custom JSON highlighting that works with both themes
-            var jsonHighlighting = CreateJsonHighlighting(isDarkTheme);
-            HighlightingManager.Instance.RegisterHighlighting("JSON-Themed", new[] { ".json" }, jsonHighlighting);
+            // No custom highlighting needed - we'll use AvalonEdit's built-in definitions
+            // which already have good theme support
         }
 
-        private IHighlightingDefinition CreateJsonHighlighting(bool isDarkTheme)
+        private IHighlightingDefinition GetHighlightingForContentType(HttpExecutionResult result)
         {
-            // VS Code Dark+ theme colors
-            // VS Code Light+ theme colors
-            // These match the official VS Code JSON syntax highlighting
-            string stringColor = isDarkTheme ? "#CE9178" : "#0451A5";      // Dark: orange | Light: blue
-            string numberColor = isDarkTheme ? "#B5CEA8" : "#098658";      // Dark: light green | Light: teal
-            string keywordColor = isDarkTheme ? "#569CD6" : "#0000FF";     // Dark: blue | Light: dark blue (true/false)
-            string nullColor = isDarkTheme ? "#569CD6" : "#0000FF";        // Dark: blue | Light: dark blue
-            string bracketColor = isDarkTheme ? "#808080" : "#383A42";     // Dark: gray | Light: dark gray
-            string colonColor = isDarkTheme ? "#D4D4D4" : "#000000";       // Dark: light gray | Light: black
-
-            var xshd = $@"<?xml version=""1.0""?>
-<SyntaxDefinition name=""JSON-Themed"" xmlns=""http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008"">
-    <Color name=""String"" foreground=""{stringColor}"" />
-    <Color name=""Number"" foreground=""{numberColor}"" />
-    <Color name=""Keyword"" foreground=""{keywordColor}"" fontWeight=""bold"" />
-    <Color name=""Null"" foreground=""{nullColor}"" />
-    <Color name=""Bracket"" foreground=""{bracketColor}"" />
-    <Color name=""Colon"" foreground=""{colonColor}"" />
-    
-    <RuleSet>
-        <Span color=""String"" multiline=""false"">
-            <Begin>""</Begin>
-            <End>""</End>
-            <RuleSet>
-                <Span begin=""\\"" end="""" />
-            </RuleSet>
-        </Span>
-        
-        <Keywords color=""Keyword"">
-            <Word>true</Word>
-            <Word>false</Word>
-        </Keywords>
-        
-        <Keywords color=""Null"">
-            <Word>null</Word>
-        </Keywords>
-        
-        <Rule color=""Number"">
-            \b-?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?\b
-        </Rule>
-        
-        <Rule color=""Bracket"">
-            [\[\]{{}},]
-        </Rule>
-        
-        <Rule color=""Colon"">
-            :
-        </Rule>
-    </RuleSet>
-</SyntaxDefinition>";
-
-            using (var reader = new XmlTextReader(new System.IO.StringReader(xshd)))
+            if (result.IsJson)
             {
-                return HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                // JavaScript highlighting works well for JSON
+                return HighlightingManager.Instance.GetDefinition("JavaScript");
             }
+            else if (result.IsXml)
+            {
+                return HighlightingManager.Instance.GetDefinition("XML");
+            }
+            else if (result.IsHtml)
+            {
+                return HighlightingManager.Instance.GetDefinition("HTML");
+            }
+            
+            return null;
         }
 
         private void UpdateFolding()
@@ -176,9 +131,10 @@ namespace VSEndpoint.ToolWindows
         {
             _currentResult = result;
 
-            // Hide empty state, show tabs
+            // Hide empty state, show content
             EmptyStatePanel.Visibility = Visibility.Collapsed;
-            ResponseTabs.Visibility = Visibility.Visible;
+            BodyTab.IsChecked = true;
+            BodyContent.Visibility = Visibility.Visible;
 
             // Update metadata bar
             UpdateMetadataBar(result);
@@ -194,6 +150,16 @@ namespace VSEndpoint.ToolWindows
 
             // Update raw tab
             UpdateRawTab(result);
+
+            // Update status bar
+            if (result.Success)
+            {
+                ContentTypeText.Text = result.ContentType ?? "";
+            }
+            else
+            {
+                ContentTypeText.Text = "Error";
+            }
         }
 
         /// <summary>
@@ -222,7 +188,7 @@ namespace VSEndpoint.ToolWindows
             _isTreeViewMode = false;
             DisposeJsonDocument();
             EmptyStatePanel.Visibility = Visibility.Visible;
-            ResponseTabs.Visibility = Visibility.Collapsed;
+            HideAllContent();
             StatusBadge.Visibility = Visibility.Collapsed;
             ResponseTimeText.Text = "--";
             ResponseSizeText.Text = "--";
@@ -235,6 +201,47 @@ namespace VSEndpoint.ToolWindows
             JsonTreeView.Items.Clear();
             TreeViewToggle.IsChecked = false;
             TreeViewToggleText.Text = "Tree View";
+            BodyTab.IsChecked = true;
+            ContentTypeText.Text = "";
+        }
+
+        private void HideAllContent()
+        {
+            // Guard against calls during InitializeComponent
+            if (BodyContent == null) return;
+            
+            BodyContent.Visibility = Visibility.Collapsed;
+            HeadersGrid.Visibility = Visibility.Collapsed;
+            CookiesGrid.Visibility = Visibility.Collapsed;
+            RawContent.Visibility = Visibility.Collapsed;
+        }
+
+        private void ViewTab_Checked(object sender, RoutedEventArgs e)
+        {
+            // Guard against calls during InitializeComponent
+            if (BodyContent == null) return;
+            
+            if (sender is RadioButton tab)
+            {
+                HideAllContent();
+
+                if (tab == BodyTab)
+                {
+                    BodyContent.Visibility = Visibility.Visible;
+                }
+                else if (tab == HeadersTab)
+                {
+                    HeadersGrid.Visibility = Visibility.Visible;
+                }
+                else if (tab == CookiesTab)
+                {
+                    CookiesGrid.Visibility = Visibility.Visible;
+                }
+                else if (tab == RawTab)
+                {
+                    RawContent.Visibility = Visibility.Visible;
+                }
+            }
         }
 
         private void DisposeJsonDocument()
@@ -304,9 +311,10 @@ namespace VSEndpoint.ToolWindows
             var body = result.ResponseBody ?? string.Empty;
 
             // Set syntax highlighting based on content type
+            BodyEditor.SyntaxHighlighting = GetHighlightingForContentType(result);
+            
             if (result.IsJson)
             {
-                BodyEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("JSON-Themed");
                 // Pretty-print JSON
                 try
                 {
@@ -317,18 +325,6 @@ namespace VSEndpoint.ToolWindows
                 {
                     // Not valid JSON despite content type
                 }
-            }
-            else if (result.IsXml)
-            {
-                BodyEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("XML");
-            }
-            else if (result.IsHtml)
-            {
-                BodyEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("HTML");
-            }
-            else
-            {
-                BodyEditor.SyntaxHighlighting = null;
             }
 
             BodyEditor.Text = body;
