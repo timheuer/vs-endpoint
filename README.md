@@ -2,6 +2,9 @@
 
 A Visual Studio extension for testing REST APIs directly from `.http` and `.rest` files.
 
+<img width="1824" height="1100" alt="image" src="https://github.com/user-attachments/assets/05ca2abb-c0fe-4347-9e9a-bc12872b84e7" />
+
+
 ## Features
 
 - **Execute HTTP Requests**: Click the play button in the glyph margin or use the context menu to send requests
