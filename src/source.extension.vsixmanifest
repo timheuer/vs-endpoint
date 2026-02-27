@@ -5,6 +5,7 @@
 		<DisplayName>Endpoint</DisplayName>
 		<Description xml:space="preserve">A REST API testing extension for .http files</Description>
 		<Icon>icon.png</Icon>
+		<License>license.md</License>
 		<Preview>true</Preview>
 	</Metadata>
 	<Installation>

@@ -69,7 +69,7 @@ jobs:
           | Name | Value |
           | --- | --- |
           | Final build number | ${{ env.VERSION }} |
-          | Open VSX gallery | https://open-vsx.org/extension/TimHeuer/vs-endpoint |
+          | VSIX Gallery | https://www.vsixgallery.com/extension/TimHeuer.vs-endpoint |
           | Marketplace gallery | https://marketplace.visualstudio.com/items?itemName=TimHeuer.vs-endpoint |
           "@ >> $env:GITHUB_STEP_SUMMARY
 
