@@ -18,7 +18,7 @@ jobs:
     needs: build
     environment:
       name: production
-      url: https://marketplace.visualstudio.com/items?itemName=TimHeuer.vs_endpoint
+      url: https://marketplace.visualstudio.com/items?itemName=TimHeuer.vs-endpoint
     name: Publish
     runs-on: windows-latest
     permissions:
@@ -69,7 +69,7 @@ jobs:
           | Name | Value |
           | --- | --- |
           | Final build number | ${{ env.VERSION }} |
-          | Open VSX gallery | https://open-vsx.org/extension/TimHeuer/vs_endpoint |
-          | Marketplace gallery | https://marketplace.visualstudio.com/items?itemName=TimHeuer.vs_endpoint |
+          | Open VSX gallery | https://open-vsx.org/extension/TimHeuer/vs-endpoint |
+          | Marketplace gallery | https://marketplace.visualstudio.com/items?itemName=TimHeuer.vs-endpoint |
           "@ >> $env:GITHUB_STEP_SUMMARY
 

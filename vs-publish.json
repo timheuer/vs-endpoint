@@ -2,7 +2,7 @@
   "$schema": "http://json.schemastore.org/vsix-publish",
   "categories": [ "testing", "build" ],
   "identity": {
-    "internalName": "vs_endpoint",
+    "internalName": "vs-endpoint",
     "tags": [ "http", "rest", "api", "visualstudio" ]
   },
   "overview": "README.md",
