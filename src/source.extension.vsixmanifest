@@ -4,6 +4,7 @@
 		<Identity Id="TimHeuer.vs-endpoint" Version="0.0.999" Language="en-US" Publisher="Tim Heuer" />
 		<DisplayName>Endpoint</DisplayName>
 		<Description xml:space="preserve">A REST API testing extension for .http files</Description>
+		<Icon>icon.png</Icon>
 		<Preview>true</Preview>
 	</Metadata>
 	<Installation>
