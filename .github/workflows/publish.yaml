@@ -62,3 +62,14 @@ jobs:
           publish-manifest-file: vs-publish.json
           personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}
 
+      - name: Add publish summary
+        if: ${{ always() }}
+        run: |
+          @"
+          | Name | Value |
+          | --- | --- |
+          | Final build number | ${{ env.VERSION }} |
+          | Open VSX gallery | https://open-vsx.org/extension/TimHeuer/vs_endpoint |
+          | Marketplace gallery | https://marketplace.visualstudio.com/items?itemName=TimHeuer.vs_endpoint |
+          "@ >> $env:GITHUB_STEP_SUMMARY
+
