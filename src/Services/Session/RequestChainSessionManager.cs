@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using HttpFileParser.Variables;
 
 namespace VSEndpoint.Services.Session
 {
@@ -21,7 +22,7 @@ namespace VSEndpoint.Services.Session
     /// Manages request chain sessions for resolving cross-request references.
     /// Supports {{requestName.response.body.path}} and {{requestName.response.headers.X-Header}} syntax.
     /// </summary>
-    public class RequestChainSessionManager
+    public class RequestChainSessionManager : IRequestResponseProvider
     {
         private static readonly Regex ChainReferenceRegex = new Regex(
             @"\{\{(?<request>[a-zA-Z_][a-zA-Z0-9_]*)\.response\.(?<type>body|headers)(?:\.(?<path>[^}]+))?\}\}",
@@ -160,6 +161,33 @@ namespace VSEndpoint.Services.Session
                 JsonValueKind.Null => "null",
                 _ => current.GetRawText()
             };
+        }
+
+        public RequestResponse GetResponse(string requestName)
+        {
+            lock (_lock)
+            {
+                if (!_sessionResponses.TryGetValue(requestName, out var response))
+                {
+                    return null;
+                }
+
+                response.Headers.TryGetValue("Content-Type", out var contentType);
+                return new RequestResponse(
+                    requestName,
+                    response.StatusCode,
+                    new Dictionary<string, string>(response.Headers, StringComparer.OrdinalIgnoreCase),
+                    response.Body ?? string.Empty,
+                    contentType);
+            }
+        }
+
+        public bool HasResponse(string requestName)
+        {
+            lock (_lock)
+            {
+                return _sessionResponses.ContainsKey(requestName);
+            }
         }
 
         /// <summary>

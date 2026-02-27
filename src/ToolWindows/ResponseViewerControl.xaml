@@ -3,21 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:vs="clr-namespace:VSEndpoint.ToolWindows"
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
              xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
              xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="600"
-             Background="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
-             Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}">
+             Background="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBackgroundBrushKey}}"
+             Foreground="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}">
 
     <UserControl.Resources>
         <!-- Modern View Tab Style (RadioButton-based) -->
         <Style x:Key="ViewTabStyle" TargetType="RadioButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
             <Setter Property="Padding" Value="14,8"/>
             <Setter Property="Margin" Value="0,0,2,0"/>
             <Setter Property="FontSize" Value="12"/>
@@ -46,13 +46,13 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="border" Property="Background" 
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
+                                        Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarGradientBrushKey}}"/>
                                 <Setter TargetName="indicator" Property="Background" Value="#0078D4"/>
                                 <Setter Property="FontWeight" Value="SemiBold"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" 
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                                        Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                             </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
@@ -60,7 +60,7 @@
                                     <Condition Property="IsMouseOver" Value="True"/>
                                 </MultiTrigger.Conditions>
                                 <Setter TargetName="border" Property="Background" 
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
+                                        Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarGradientBrushKey}}"/>
                             </MultiTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -71,9 +71,9 @@
         <!-- Modern Button Style -->
         <Style x:Key="ModernButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"/>
             <Setter Property="Padding" Value="12,6"/>
             <Setter Property="Margin" Value="0,0,4,0"/>
             <Setter Property="FontSize" Value="12"/>
@@ -93,12 +93,12 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" 
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                                        Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="#0078D4"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Background" 
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseDownBackgroundGradientBrushKey}}"/>
+                                        Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarMouseDownBackgroundGradientBrushKey}}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.5"/>
@@ -112,8 +112,8 @@
         <!-- VS-themed Toggle Button Style -->
         <Style x:Key="VsToggleButtonStyle" TargetType="ToggleButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="10,5"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -131,7 +131,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" 
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                                        Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="#0078D4"/>
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
@@ -141,7 +141,7 @@
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Background" 
-                                        Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseDownBackgroundGradientBrushKey}}"/>
+                                        Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarMouseDownBackgroundGradientBrushKey}}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -151,19 +151,19 @@
 
         <!-- DataGrid Styles -->
         <Style TargetType="DataGrid">
-            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-            <Setter Property="RowBackground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            <Setter Property="AlternatingRowBackground" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
-            <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarGradientBrushKey}}"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"/>
         </Style>
 
         <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarGradientBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"/>
             <Setter Property="BorderThickness" Value="0,0,1,1"/>
             <Setter Property="Padding" Value="8,6"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -171,13 +171,13 @@
 
         <Style TargetType="DataGridCell">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="Padding" Value="6,4"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
-                    <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -186,48 +186,48 @@
             <Setter Property="Background" Value="Transparent"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
         <Style TargetType="TreeView">
-            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"/>
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
         <Style TargetType="TreeViewItem">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Padding" Value="2,1"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.SystemHighlightBrushKey}}"/>
-                    <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.SystemHighlightTextBrushKey}}"/>
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.SystemHighlightBrushKey}}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.SystemHighlightTextBrushKey}}"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarMouseOverBackgroundGradientBrushKey}}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
         <Style TargetType="TextBox" x:Key="RawTextBoxStyle">
-            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-            <Setter Property="CaretBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
             <Setter Property="FontFamily" Value="Consolas"/>
             <Setter Property="FontSize" Value="12"/>
         </Style>
 
         <Style TargetType="ScrollViewer">
-            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBackgroundBrushKey}}"/>
         </Style>
     </UserControl.Resources>
 
@@ -241,8 +241,8 @@
 
         <!-- Modern Toolbar -->
         <Border Grid.Row="0"
-                Background="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"
-                BorderBrush="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"
+                Background="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarGradientBrushKey}}"
+                BorderBrush="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"
                 BorderThickness="0,0,0,1"
                 Padding="10,6">
             <Grid>
@@ -275,13 +275,13 @@
                             Margin="0,0,16,0">
                     <TextBlock Text="Time: "
                                FontSize="12"
-                               Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
+                               Foreground="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"
                                Opacity="0.7"/>
                     <TextBlock x:Name="ResponseTimeText"
                                Text="--"
                                FontSize="12"
                                FontWeight="Medium"
-                               Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                               Foreground="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
                 </StackPanel>
 
                 <!-- Response Size -->
@@ -291,13 +291,13 @@
                             Margin="0,0,16,0">
                     <TextBlock Text="Size: "
                                FontSize="12"
-                               Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
+                               Foreground="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"
                                Opacity="0.7"/>
                     <TextBlock x:Name="ResponseSizeText"
                                Text="--"
                                FontSize="12"
                                FontWeight="Medium"
-                               Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                               Foreground="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"/>
                 </StackPanel>
 
                 <!-- Loading Indicator -->
@@ -308,7 +308,7 @@
                             Visibility="Collapsed">
                     <TextBlock Text="Executing request..."
                                FontSize="12"
-                               Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
+                               Foreground="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"
                                FontStyle="Italic"/>
                 </StackPanel>
 
@@ -327,7 +327,7 @@
 
         <!-- View Tabs -->
         <Border Grid.Row="1"
-                Background="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                Background="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBackgroundBrushKey}}"
                 Padding="10,8,10,0">
             <StackPanel Orientation="Horizontal">
                 <RadioButton x:Name="BodyTab"
@@ -358,8 +358,8 @@
         <!-- Content Area -->
         <Border Grid.Row="2"
                 Margin="10,0,10,10"
-                Background="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"
-                BorderBrush="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"
+                Background="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarGradientBrushKey}}"
+                BorderBrush="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"
                 BorderThickness="1"
                 CornerRadius="6">
             <Grid x:Name="ContentArea" Margin="1">
@@ -445,13 +445,13 @@
 
         <!-- Modern Status Bar -->
         <Border Grid.Row="3"
-                Background="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"
-                BorderBrush="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}"
+                Background="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarGradientBrushKey}}"
+                BorderBrush="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBorderBrushKey}}"
                 BorderThickness="0,1,0,0"
                 Padding="12,6">
             <TextBlock x:Name="ContentTypeText"
                        Text=""
-                       Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
+                       Foreground="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"
                        Opacity="0.7"
                        FontSize="11"
                        VerticalAlignment="Center"/>
@@ -462,12 +462,12 @@
                 Grid.Row="1"
                 Grid.RowSpan="3"
                 Visibility="Visible"
-                Background="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
+                Background="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowBackgroundBrushKey}}">
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center">
                 <Border Width="64" Height="64" 
                         CornerRadius="32" 
-                        Background="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}"
+                        Background="{DynamicResource {x:Static vs:VsThemeKeys.CommandBarGradientBrushKey}}"
                         Margin="0,0,0,16">
                     <TextBlock Text="⚡"
                                FontSize="28"
@@ -477,12 +477,12 @@
                 <TextBlock Text="No response yet"
                            FontSize="16"
                            FontWeight="Medium"
-                           Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
+                           Foreground="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"
                            Opacity="0.7"
                            HorizontalAlignment="Center"/>
                 <TextBlock Text="Execute a request from a .http or .rest file"
                            FontSize="12"
-                           Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}"
+                           Foreground="{DynamicResource {x:Static vs:VsThemeKeys.ToolWindowTextBrushKey}}"
                            Opacity="0.5"
                            HorizontalAlignment="Center"
                            Margin="0,6,0,0"/>
@@ -490,3 +490,4 @@
         </Border>
     </Grid>
 </UserControl>
+

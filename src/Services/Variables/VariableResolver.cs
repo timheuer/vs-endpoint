@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
-using System.Text.RegularExpressions;
+using HttpFileParser.Variables;
 
 namespace VSEndpoint.Services.Variables
 {
@@ -12,13 +11,9 @@ namespace VSEndpoint.Services.Variables
     /// </summary>
     public class VariableResolver
     {
-        private static readonly Regex VariablePlaceholderRegex = new Regex(
-            @"\{\{(?<name>[^}]+)\}\}",
-            RegexOptions.Compiled);
-
-        private static readonly Random RandomGenerator = new Random();
-
         private readonly Dictionary<string, string> _environmentVariables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> _manualVariables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private IRequestResponseProvider _requestResponseProvider;
         private string _currentEnvironment = "dev";
 
         /// <summary>
@@ -31,42 +26,11 @@ namespace VSEndpoint.Services.Variables
             if (!File.Exists(filePath))
                 return;
 
-            try
+            var json = File.ReadAllText(filePath);
+            var envFile = global::HttpFileParser.HttpEnvironment.Parse(json, filePath);
+            foreach (var kvp in envFile.GetMergedEnvironment(_currentEnvironment))
             {
-                var json = File.ReadAllText(filePath);
-                using var doc = JsonDocument.Parse(json);
-
-                // Look for current environment section
-                if (doc.RootElement.TryGetProperty(_currentEnvironment, out var envSection))
-                {
-                    LoadEnvironmentSection(envSection);
-                }
-
-                // Also load $shared section if exists
-                if (doc.RootElement.TryGetProperty("$shared", out var sharedSection))
-                {
-                    LoadEnvironmentSection(sharedSection, overwrite: false);
-                }
-            }
-            catch (JsonException)
-            {
-                // Invalid JSON - ignore
-            }
-        }
-
-        private void LoadEnvironmentSection(JsonElement section, bool overwrite = true)
-        {
-            foreach (var property in section.EnumerateObject())
-            {
-                if (property.Value.ValueKind == JsonValueKind.String)
-                {
-                    var key = property.Name;
-                    var value = property.Value.GetString();
-                    if (overwrite || !_environmentVariables.ContainsKey(key))
-                    {
-                        _environmentVariables[key] = value;
-                    }
-                }
+                _environmentVariables[kvp.Key] = kvp.Value;
             }
         }
 
@@ -83,7 +47,15 @@ namespace VSEndpoint.Services.Variables
         /// </summary>
         public void SetVariable(string name, string value)
         {
-            _environmentVariables[name] = value;
+            _manualVariables[name] = value;
+        }
+
+        /// <summary>
+        /// Sets request-response provider for chained request variable resolution.
+        /// </summary>
+        public void SetRequestResponseProvider(IRequestResponseProvider provider)
+        {
+            _requestResponseProvider = provider;
         }
 
         /// <summary>
@@ -94,107 +66,37 @@ namespace VSEndpoint.Services.Variables
             if (string.IsNullOrEmpty(input))
                 return input;
 
-            return VariablePlaceholderRegex.Replace(input, match =>
-            {
-                var variableName = match.Groups["name"].Value.Trim();
-                return ResolveVariable(variableName, localVariables, fileVariables);
-            });
-        }
+            var context = new VariableContext();
 
-        private string ResolveVariable(string name, Dictionary<string, string> localVariables, Dictionary<string, string> fileVariables)
-        {
-            // Check for built-in functions first
-            if (name.StartsWith("$"))
+            if (localVariables != null && localVariables.Count > 0)
             {
-                return ResolveBuiltInFunction(name);
+                context.AddResolver(new EnvironmentVariableResolver(localVariables));
             }
 
-            // Precedence: local → file → environment
-            if (localVariables != null && localVariables.TryGetValue(name, out var localValue))
+            if (fileVariables != null && fileVariables.Count > 0)
             {
-                return localValue;
+                context.AddResolver(new EnvironmentVariableResolver(fileVariables));
             }
 
-            if (fileVariables != null && fileVariables.TryGetValue(name, out var fileValue))
+            if (_manualVariables.Count > 0)
             {
-                return fileValue;
+                context.AddResolver(new EnvironmentVariableResolver(_manualVariables));
             }
 
-            if (_environmentVariables.TryGetValue(name, out var envValue))
+            if (_environmentVariables.Count > 0)
             {
-                return envValue;
+                context.AddResolver(new EnvironmentVariableResolver(_environmentVariables));
             }
 
-            // Return placeholder as-is if not found
-            return $"{{{{{name}}}}}";
-        }
-
-        private string ResolveBuiltInFunction(string name)
-        {
-            // $datetime
-            if (name.StartsWith("$datetime"))
+            if (_requestResponseProvider != null)
             {
-                var format = ExtractParameter(name, "$datetime");
-                return string.IsNullOrEmpty(format)
-                    ? DateTime.UtcNow.ToString("o")
-                    : DateTime.UtcNow.ToString(format);
+                context.AddResolver(new RequestVariableResolver(_requestResponseProvider));
             }
 
-            // $guid
-            if (name == "$guid")
-            {
-                return Guid.NewGuid().ToString();
-            }
+            context.AddResolver(new DynamicVariableResolver());
 
-            // $randomInt
-            if (name.StartsWith("$randomInt"))
-            {
-                var param = ExtractParameter(name, "$randomInt");
-                var parts = param.Split(',');
-                int min = 0, max = int.MaxValue;
-                if (parts.Length >= 1 && int.TryParse(parts[0].Trim(), out var p1))
-                {
-                    min = p1;
-                }
-                if (parts.Length >= 2 && int.TryParse(parts[1].Trim(), out var p2))
-                {
-                    max = p2;
-                }
-                return RandomGenerator.Next(min, max).ToString();
-            }
-
-            // $timestamp
-            if (name == "$timestamp")
-            {
-                return DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-            }
-
-            // $processEnv
-            if (name.StartsWith("$processEnv"))
-            {
-                var envVar = ExtractParameter(name, "$processEnv");
-                return Environment.GetEnvironmentVariable(envVar) ?? string.Empty;
-            }
-
-            // $dotenv
-            if (name.StartsWith("$dotenv"))
-            {
-                var varName = ExtractParameter(name, "$dotenv");
-                // Would need to load .env file - return empty for now
-                return string.Empty;
-            }
-
-            return $"{{{{{name}}}}}";
-        }
-
-        private string ExtractParameter(string input, string functionName)
-        {
-            // Handles formats like: $datetime iso8601, $randomInt 1 100, $processEnv PATH
-            if (input.Length <= functionName.Length)
-                return string.Empty;
-
-            var param = input.Substring(functionName.Length).Trim();
-            return param;
+            var expander = new VariableExpander(context);
+            return expander.Expand(input);
         }
     }
 }

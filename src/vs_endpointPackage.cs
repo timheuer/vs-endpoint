@@ -21,6 +21,7 @@ namespace VSEndpoint
         Window = "DocumentWell",
         Orientation = ToolWindowOrientation.Right)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class VSEndpointPackage : AsyncPackage
     {
         /// <summary>

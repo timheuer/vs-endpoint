@@ -212,10 +212,7 @@ namespace VSEndpoint.Services.Execution
 
         private string ResolveVariables(string input, Dictionary<string, string> localVariables, Dictionary<string, string> fileVariables)
         {
-            // First resolve session chain references
-            var resolved = _sessionManager.ResolveChainReferences(input);
-            // Then resolve regular variables
-            return _variableResolver.Resolve(resolved, localVariables, fileVariables);
+            return _variableResolver.Resolve(input, localVariables, fileVariables);
         }
 
         private static bool IsContentHeader(string headerName)

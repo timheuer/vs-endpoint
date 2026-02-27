@@ -589,7 +589,7 @@ namespace VSEndpoint.ToolWindows
             var openBraces = new Stack<int>();
             var openBrackets = new Stack<int>();
 
-            var text = document.Text;
+            string text = document.Text;
             bool inString = false;
             char prevChar = '\0';
 
@@ -617,7 +617,7 @@ namespace VSEndpoint.ToolWindows
                                 // Only fold if there are multiple lines
                                 if (HasMultipleLines(text, startOffset, i))
                                 {
-                                    foldings.Add(new NewFolding(startOffset, i + 1) { Name = "{ ... }" });
+                                    foldings.Add(new NewFolding(startOffset, i + 1) { Name = "{...}" });
                                 }
                             }
                             break;
@@ -630,7 +630,7 @@ namespace VSEndpoint.ToolWindows
                                 int startOffset = openBrackets.Pop();
                                 if (HasMultipleLines(text, startOffset, i))
                                 {
-                                    foldings.Add(new NewFolding(startOffset, i + 1) { Name = "[ ... ]" });
+                                    foldings.Add(new NewFolding(startOffset, i + 1) { Name = "[...]" });
                                 }
                             }
                             break;

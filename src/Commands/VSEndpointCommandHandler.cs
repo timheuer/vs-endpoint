@@ -28,7 +28,7 @@ namespace VSEndpoint.Commands
         private const int ClearSessionCommandId = 0x0103;
 
         private readonly AsyncPackage _package;
-        private readonly HttpFileParser _parser;
+        private readonly VSEndpoint.Services.Parser.HttpFileParser _parser;
         private readonly VariableResolver _variableResolver;
         private readonly RequestChainSessionManager _sessionManager;
         private HttpExecutionService _executionService;
@@ -39,9 +39,10 @@ namespace VSEndpoint.Commands
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
 
-            _parser = new HttpFileParser();
+            _parser = new VSEndpoint.Services.Parser.HttpFileParser();
             _variableResolver = new VariableResolver();
             _sessionManager = new RequestChainSessionManager();
+            _variableResolver.SetRequestResponseProvider(_sessionManager);
             _executionService = new HttpExecutionService(_variableResolver, _sessionManager);
 
             // Register commands
@@ -109,12 +110,10 @@ namespace VSEndpoint.Commands
         /// <summary>
         /// Executes the request at a specific line number (called from glyph margin).
         /// </summary>
-        public void ExecuteRequestAtLine(int lineNumber)
+        public async System.Threading.Tasks.Task ExecuteRequestAtLineAsync(int lineNumber)
         {
-            _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
-            {
-                await ExecuteSendRequestAsync(lineNumber);
-            });
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ExecuteSendRequestAsync(lineNumber);
         }
 
         private async System.Threading.Tasks.Task ExecuteSendRequestAsync(int? specificLine = null)
@@ -212,13 +211,17 @@ namespace VSEndpoint.Commands
             {
                 // Try solution root
                 var dte = _package.GetService<EnvDTE.DTE, EnvDTE.DTE>();
-                var solutionDir = Path.GetDirectoryName(dte?.Solution?.FullName ?? string.Empty);
-                if (!string.IsNullOrEmpty(solutionDir))
+                var solutionPath = dte?.Solution?.FullName;
+                if (!string.IsNullOrWhiteSpace(solutionPath))
                 {
-                    envFile = Path.Combine(solutionDir, "http-client.env.json");
-                    if (File.Exists(envFile))
+                    var solutionDir = Path.GetDirectoryName(solutionPath);
+                    if (!string.IsNullOrEmpty(solutionDir))
                     {
-                        _variableResolver.LoadEnvironmentFile(envFile);
+                        envFile = Path.Combine(solutionDir, "http-client.env.json");
+                        if (File.Exists(envFile))
+                        {
+                            _variableResolver.LoadEnvironmentFile(envFile);
+                        }
                     }
                 }
             }

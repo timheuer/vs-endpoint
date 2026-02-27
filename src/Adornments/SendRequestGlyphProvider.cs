@@ -45,7 +45,7 @@ namespace VSEndpoint.Adornments
     public class SendRequestTagger : ITagger<SendRequestTag>
     {
         private readonly ITextBuffer _buffer;
-        private readonly HttpFileParser _parser;
+        private readonly VSEndpoint.Services.Parser.HttpFileParser _parser;
         private readonly string _filePath;
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
@@ -53,7 +53,7 @@ namespace VSEndpoint.Adornments
         public SendRequestTagger(ITextBuffer buffer, string filePath)
         {
             _buffer = buffer;
-            _parser = new HttpFileParser();
+            _parser = new VSEndpoint.Services.Parser.HttpFileParser();
             _filePath = filePath;
             _buffer.Changed += OnBufferChanged;
             Debug.WriteLine($"[VSEndpoint Glyph] SendRequestTagger created for: {filePath}");
@@ -93,21 +93,48 @@ namespace VSEndpoint.Adornments
 
             foreach (var request in parseResult.Requests)
             {
-                if (request.StartLine <= 0 || request.StartLine > snapshot.LineCount)
+                var glyphLineNumber = GetGlyphLineNumber(snapshot, request);
+                if (glyphLineNumber <= 0 || glyphLineNumber > snapshot.LineCount)
                 {
-                    Debug.WriteLine($"[VSEndpoint Glyph] Invalid line {request.StartLine} for request");
+                    Debug.WriteLine($"[VSEndpoint Glyph] Invalid line {glyphLineNumber} for request");
                     continue;
                 }
 
-                var line = snapshot.GetLineFromLineNumber(request.StartLine - 1);
-                var span = new SnapshotSpan(line.Start, 0);
+                var line = snapshot.GetLineFromLineNumber(glyphLineNumber - 1);
+                var span = new SnapshotSpan(line.Start, line.Length);
 
-                Debug.WriteLine($"[VSEndpoint Glyph] Yielding tag for line {request.StartLine}: {request.Method} {request.Url}");
+                Debug.WriteLine($"[VSEndpoint Glyph] Yielding tag for line {glyphLineNumber}: {request.Method} {request.Url}");
 
                 yield return new TagSpan<SendRequestTag>(
                     span,
-                    new SendRequestTag(request.StartLine, request.Method, request.Url, request.Name));
+                    new SendRequestTag(glyphLineNumber, request.Method, request.Url, request.Name));
             }
+        }
+
+        private static int GetGlyphLineNumber(ITextSnapshot snapshot, HttpRequestDefinition request)
+        {
+            var startLine = Math.Max(1, request.StartLine);
+            var endLine = request.EndLine > 0 ? Math.Min(request.EndLine, snapshot.LineCount) : startLine;
+
+            if (!string.IsNullOrWhiteSpace(request.Method))
+            {
+                for (int lineNumber = startLine; lineNumber <= endLine; lineNumber++)
+                {
+                    var lineText = snapshot.GetLineFromLineNumber(lineNumber - 1).GetText().TrimStart();
+                    if (lineText.StartsWith("#", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    if (lineText.StartsWith(request.Method + " ", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(lineText, request.Method, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return lineNumber;
+                    }
+                }
+            }
+
+            return startLine;
         }
 
         private static bool IsHttpFile(string filePath)
@@ -220,12 +247,44 @@ namespace VSEndpoint.Adornments
                 ToolTip = image.ToolTip
             };
 
+            bool isExecuting = false;
+
             container.MouseLeftButtonDown += (s, e) =>
             {
+                // Prevent multiple clicks
+                if (isExecuting)
+                {
+                    e.Handled = true;
+                    return;
+                }
+
                 _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
                 {
-                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                    ExecuteRequest(sendTag.LineNumber);
+                    try
+                    {
+                        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                        
+                        // Set executing state
+                        isExecuting = true;
+                        container.Opacity = 0.5;
+                        image.Cursor = Cursors.Wait;
+                        container.Cursor = Cursors.Wait;
+
+                        await ExecuteRequestAsync(sendTag.LineNumber);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error executing request: {ex.Message}");
+                    }
+                    finally
+                    {
+                        // Reset state
+                        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                        isExecuting = false;
+                        container.Opacity = 1.0;
+                        image.Cursor = Cursors.Hand;
+                        container.Cursor = Cursors.Hand;
+                    }
                 });
                 e.Handled = true;
             };
@@ -233,8 +292,11 @@ namespace VSEndpoint.Adornments
             // Hover effect - slight scale
             container.MouseEnter += (s, e) =>
             {
-                container.RenderTransform = new ScaleTransform(1.15, 1.15);
-                container.RenderTransformOrigin = new Point(0.5, 0.5);
+                if (!isExecuting)
+                {
+                    container.RenderTransform = new ScaleTransform(1.15, 1.15);
+                    container.RenderTransformOrigin = new Point(0.5, 0.5);
+                }
             };
             container.MouseLeave += (s, e) =>
             {
@@ -251,22 +313,26 @@ namespace VSEndpoint.Adornments
             return url.Length > 50 ? url.Substring(0, 47) + "..." : url;
         }
 
-        private void ExecuteRequest(int lineNumber)
+        private async System.Threading.Tasks.Task ExecuteRequestAsync(int lineNumber)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            // Move cursor to the request line and execute send command
+            // Move cursor to the request line
             try
             {
                 var caretLine = _view.TextSnapshot.GetLineFromLineNumber(lineNumber - 1);
                 _view.Caret.MoveTo(caretLine.Start);
 
                 // Invoke the Send Request command
-                Commands.VSEndpointCommandHandler.Instance?.ExecuteRequestAtLine(lineNumber);
+                if (Commands.VSEndpointCommandHandler.Instance != null)
+                {
+                    await Commands.VSEndpointCommandHandler.Instance.ExecuteRequestAtLineAsync(lineNumber);
+                }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error executing request: {ex.Message}");
+                throw; // Re-throw to be caught by the caller for UI reset
             }
         }
     }
