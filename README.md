@@ -54,6 +54,12 @@ If MEF components aren't loading, clear the ComponentModelCache:
 Remove-Item "$env:LOCALAPPDATA\Microsoft\VisualStudio\*Exp\ComponentModelCache" -Recurse -Force
 ```
 
+## Marketplace publishing
+
+- Publishing automation is configured in `.github/workflows/publish.yaml`.
+- Add the repository secret `VS_PUBLISHER_ACCESS_TOKEN` for Marketplace publishing.
+- Publishing to Marketplace is gated to commits (or workflow dispatch command input) containing `[release]`.
+
 ## Project Structure
 
 ```

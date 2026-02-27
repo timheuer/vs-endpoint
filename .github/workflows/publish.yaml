@@ -1,0 +1,64 @@
+name: "Publish"
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      Command:
+        description: "Publish command"
+
+jobs:
+  build:
+    name: Build and Test
+    uses: ./.github/workflows/_build.yaml
+
+  publish:
+    needs: build
+    environment:
+      name: production
+      url: https://marketplace.visualstudio.com/items?itemName=TimHeuer.vs_endpoint
+    name: Publish
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}.vsix
+
+      - name: Tag and release
+        id: tag_release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: Release ${{ env.VERSION }}
+          tag_name: ${{ env.VERSION }}
+          generate_release_notes: true
+          files: |
+            **/*.vsix
+
+      - name: Upload to OpenVSX
+        uses: timheuer/openvsixpublish@v1
+        with:
+          vsix-file: ${{ github.event.repository.name }}.vsix
+
+      - name: Publish extension to Marketplace
+        id: publish_vsix
+        if: ${{ (github.event_name == 'push' && contains(github.event.head_commit.message, '[release]')) || (github.event_name == 'workflow_dispatch' && contains(github.event.inputs.Command, '[release]')) }}
+        continue-on-error: true
+        uses: cezarypiatek/VsixPublisherAction@1.1
+        with:
+          extension-file: ${{ github.event.repository.name }}.vsix
+          publish-manifest-file: vs-publish.json
+          personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}
+

@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json.schemastore.org/vsix-publish",
+  "categories": [ "testing", "build" ],
+  "identity": {
+    "internalName": "vs_endpoint",
+    "tags": [ "http", "rest", "api", "visualstudio" ]
+  },
+  "overview": "README.md",
+  "publisher": "TimHeuer",
+  "repo": "https://github.com/timheuer/vs-endpoint",
+  "qna": false
+}
